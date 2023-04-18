@@ -9,33 +9,23 @@ import java.util.Random;
 
 public class Game extends JPanel {
 
-    private int ctr = 0;
-
-    public class Enemy extends Thread{
-        private Point position;
-        private boolean isAlive;
-        private Color color;
-        private String direction;
-        private int id;
+    public class Enemy extends Square{
 
         public Enemy(){
-            position = getNewRectangleStartPosition();
-            square_positions.add(position);
-            enemy_pos.add(position);
-            isAlive = true;
-            color = new Color(Color.BLACK.getRGB());
-            this.id = ctr+1;
-            ctr++;
+            setPosition(getNewRectangleStartPosition());
+            square_positions.add(getPosition());
+            enemy_pos.add(getPosition());
+            setActive(true);
         }
         @Override
         public void run() {
             int ctr = 1;
-            while(isAlive){
+            while(isActive()){
                 try {
                     Thread.sleep(500);
                     ctr++;
                     if(ctr == 5){
-                        Bullet bullet = new Bullet("Enemy",position, bullet_pos);
+                        Bullet bullet = new Bullet("Enemy",getPosition(), bullet_pos);
                         bullets.add(bullet);
                         bullet.start();
                         ctr = 1;
@@ -43,57 +33,28 @@ public class Game extends JPanel {
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
-                direction = getRandomDirection();
+                setDirection(getRandomDirection());
                 move();
             }
         }
-        public void move(){
-            int new_x = (int)position.getX();
-            int new_y = (int)position.getY();
-            switch (direction){
-                case "UP":
-                    new_y = position.y - 10;
-                    break;
-                case "DOWN":
-                    new_y = position.y + 10;
-                    break;
-                case "LEFT":
-                    new_x = position.x - 10;
-                    break;
-                case "RIGHT":
-                    new_x = position.x + 10;
-                    break;
-            }
-            if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y <= 500){
-                position.setLocation(new_x, new_y);
-            }
-        }
     }
-    public class Friend extends Thread{
-        private Point position;
-        private boolean isAlive;
-        private Color color;
-        private String direction;
-        private int id;
+    public class Friend extends Square{
 
         public Friend(){
-            position = getNewRectangleStartPosition();
-            square_positions.add(position);
-            friend_pos.add(position);
-            isAlive = true;
-            color = new Color(Color.GREEN.getRGB());
-            this.id = ctr+1;
-            ctr++;
+            setPosition(getNewRectangleStartPosition());
+            square_positions.add(getPosition());
+            friend_pos.add(getPosition());
+            setActive(true);
         }
         @Override
         public void run() {
             int ctr = 1;
-            while(isAlive){
+            while(isActive()){
                 try {
                     Thread.sleep(500);
                     ctr++;
                     if(ctr == 5){
-                        Bullet bullet = new Bullet("Friend",position, bullet_pos);
+                        Bullet bullet = new Bullet("Friend",getPosition(), bullet_pos);
                         bullets.add(bullet);
                         bullet.start();
                         ctr = 1;
@@ -101,44 +62,18 @@ public class Game extends JPanel {
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
-                direction = getRandomDirection();
+                setDirection(getRandomDirection());
                 move();
             }
         }
-        public void move(){
-            int new_x = (int)position.getX();
-            int new_y = (int)position.getY();
-            switch (direction){
-                case "UP":
-                    new_y = position.y - 10;
-                    break;
-                case "DOWN":
-                    new_y = position.y + 10;
-                    break;
-                case "LEFT":
-                    new_x = position.x - 10;
-                    break;
-                case "RIGHT":
-                    new_x = position.x + 10;
-                    break;
-            }
-            if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y <= 500){
-                position.setLocation(new_x, new_y);
-            }
-        }
-    }
-    public class AirCraft extends Thread{
 
-        private Point position;
-        private String direction;
-        private boolean isAlive;
-        private Color color;
+    }
+    public class AirCraft extends Square{
 
         public AirCraft(){
-            position = new Point(250,250);
-            direction = "";
-            isAlive = true;
-            color = new Color(Color.RED.getRGB());
+            setPosition(new Point(250,250));
+            setDirection("");
+            setActive(true);
             addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {}
@@ -146,39 +81,41 @@ public class Game extends JPanel {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     int code = e.getKeyCode();
-                    int new_x = position.x;
-                    int new_y = position.y;
+                    int new_x = getPosition().x;
+                    int new_y = getPosition().y;
                     if(code == KeyEvent.VK_A){
-                        direction = "LEFT";
-                        new_x = position.x - 10;
+                        setDirection("LEFT");
+                        new_x = getPosition().x - 10;
                     }
                     else if(code == KeyEvent.VK_W){
-                        direction = "UP";
-                        new_y = position.y - 10;
+                        setDirection("UP");
+                        new_y = getPosition().y - 10;
                     }
                     else if(code == KeyEvent.VK_D){
-                        direction = "RIGHT";
-                        new_x = position.x + 10;
+                        setDirection("RIGHT");
+                        new_x = getPosition().x + 10;
                     }
                     else if(code == KeyEvent.VK_S){
-                        direction = "DOWN";
-                        new_y = position.y + 10;
+                        setDirection("DOWN");
+                        new_y = getPosition().y + 10;
                     }
                     System.out.println("new pos: x:"+new_x+" ,y:"+new_y);
                     if(new_x > 0 && new_x < 500 && new_y > 0 && new_y < 500){
-                        position.setLocation(new_x, new_y);
+                        Point pos = getPosition();
+                        pos.setLocation(new_x,new_y);
+                        setLocation(pos);
                     }
                 }
                 @Override
                 public void keyReleased(KeyEvent e) {
-                    direction = "";
+                    setDirection("");
                 }
             });
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     super.mousePressed(e);
-                    Bullet bullet = new Bullet("AirCraft",position, bullet_pos);
+                    Bullet bullet = new Bullet("AirCraft",getPosition(), bullet_pos);
                     bullets.add(bullet);
                     bullet.start();
                 }
@@ -187,8 +124,8 @@ public class Game extends JPanel {
 
         @Override
         public void run() {
-            while(isAlive){
-                my_pos = position;
+            while(isActive()){
+                my_pos = getPosition();
                 repaint();
             }
         }
@@ -276,7 +213,7 @@ public class Game extends JPanel {
                         g2.setColor(Color.BLUE);
                         break;
                     case "Friend":
-                        g2.setColor(new Color(128,0,128));
+                        g2.setColor(Color.MAGENTA);
                         break;
                 }
                 Point left = bullet.getPositionLeft();

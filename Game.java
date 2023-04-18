@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class Game extends JPanel {
@@ -45,6 +46,30 @@ public class Game extends JPanel {
 
         public void setDirection(String direction) {
             this.direction = direction;
+        }
+        private void checkCrossWithEnemy(){
+            Iterator<Object> iterator = friends.iterator();
+
+            while(iterator.hasNext()){
+                Object object = iterator.next();
+                if(object!=null){
+                    if(object.getClass().equals(Game.Friend.class)){
+                        Game.Friend friend = (Game.Friend)object;
+                        if(friend.isActive && position.distance(friend.getPosition()) <10){
+                            friend.setActive(false);
+                            setActive(false);
+                        }
+                    }
+                    else if(object.getClass().equals(Game.AirCraft.class)){
+                        Game.AirCraft airCraft = (Game.AirCraft)object;
+                        if(airCraft.isActive && position.distance(airCraft.getPosition()) <10){
+                            airCraft.setActive(false);
+                            setActive(false);
+                        }
+                    }
+
+                }
+            }
         }
 
         @Override
@@ -127,11 +152,25 @@ public class Game extends JPanel {
         public void setDirection(String direction) {
             this.direction = direction;
         }
+        private void checkCrossWithEnemy(){
+            Iterator<Object> iterator = enemies.iterator();
 
+            while(iterator.hasNext()){
+                Object object = iterator.next();
+                if(object!=null){
+                    Game.Enemy enemy = (Game.Enemy)object;
+                    if(enemy.isActive && position.distance(enemy.getPosition()) <10){
+                        enemy.setActive(false);
+                        setActive(false);
+                    }
+                }
+            }
+        }
         @Override
         public void run() {
             int ctr = 1;
             while(isActive){
+                checkCrossWithEnemy();
                 try {
                     Thread.sleep(500);
                     ctr++;
@@ -208,7 +247,6 @@ public class Game extends JPanel {
                         direction = "DOWN";
                         new_y = position.y + 10;
                     }
-                    System.out.println("new pos: x:"+new_x+" ,y:"+new_y);
                     if(new_x > 0 && new_x < 500 && new_y > 0 && new_y < 500){
                         position.setLocation(new_x, new_y);
                     }
@@ -264,18 +302,38 @@ public class Game extends JPanel {
                 enemy.setActive(false);
             }
         }
+        private void checkCrossWithEnemy(){
+            Iterator<Object> iterator = enemies.iterator();
+
+            while(iterator.hasNext()){
+                Object object = iterator.next();
+                if(object!=null){
+                    Game.Enemy enemy = (Game.Enemy)object;
+                    if(enemy.isActive && position.distance(enemy.getPosition()) <10){
+                        enemy.setActive(false);
+                        setActive(false);
+                    }
+                }
+            }
+        }
         @Override
         public void run() {
+            boolean winned = false;
             while(isActive){
                 if(enemies.isEmpty()){
+                    winned = true;
                     killAllSquares();
-                    JOptionPane.showMessageDialog(null, "Oyunu Kazandiniz.");
+                    JOptionPane.showMessageDialog(null, "Oyunu kazandiniz.");
                     break;
                 }
+                checkCrossWithEnemy();
                 my_pos = position;
                 repaint();
             }
-            killAllSquares();
+            if( !winned){
+                killAllSquares();
+                JOptionPane.showMessageDialog(null, "Oyunu kaybettiniz.");
+            }
             window.dispose();
         }
     }
@@ -314,6 +372,8 @@ public class Game extends JPanel {
         enemies = new ArrayList<>();
         friends = new ArrayList<>();
     }
+
+
     public Point getNewRectangleStartPosition(){
         Random random = new Random();
         int random_y = random.nextInt(51)*10;

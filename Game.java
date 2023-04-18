@@ -12,24 +12,50 @@ public class Game extends JPanel {
 
     public class Enemy extends Thread{
         private Point position;
-        private boolean isAlive;
+        private boolean isActive;
         private String direction;
 
         public Enemy(){
+            enemies.add(this);
             position = getNewRectangleStartPosition();
             square_positions.add(position);
             enemy_pos.add(position);
-            isAlive = true;
+            isActive = true;
         }
+
+        public Point getPosition() {
+            return position;
+        }
+
+        public void setPosition(Point position) {
+            this.position = position;
+        }
+
+        public boolean isActive() {
+            return isActive;
+        }
+
+        public void setActive(boolean active) {
+            isActive = active;
+        }
+
+        public String getDirection() {
+            return direction;
+        }
+
+        public void setDirection(String direction) {
+            this.direction = direction;
+        }
+
         @Override
         public void run() {
             int ctr = 1;
-            while(isAlive){
+            while(isActive){
                 try {
                     Thread.sleep(500);
                     ctr++;
                     if(ctr == 5){
-                        Bullet bullet = new Bullet("Enemy",position, bullet_pos);
+                        Bullet bullet = new Bullet("Enemy",position, bullet_pos, friends);
                         bullets.add(bullet);
                         bullet.start();
                         ctr = 1;
@@ -39,7 +65,9 @@ public class Game extends JPanel {
                 }
                 direction = getRandomDirection();
                 move();
+                repaint();
             }
+            enemies.remove(this);
         }
         public void move(){
             int new_x = (int)position.getX();
@@ -65,24 +93,50 @@ public class Game extends JPanel {
     }
     public class Friend extends Thread{
         private Point position;
-        private boolean isAlive;
+        private boolean isActive;
         private String direction;
 
         public Friend(){
+            friends.add(this);
             position = getNewRectangleStartPosition();
             square_positions.add(position);
             friend_pos.add(position);
-            isAlive = true;
+            isActive = true;
         }
+
+        public Point getPosition() {
+            return position;
+        }
+
+        public void setPosition(Point position) {
+            this.position = position;
+        }
+
+        public boolean isActive() {
+            return isActive;
+        }
+
+        public void setActive(boolean active) {
+            isActive = active;
+        }
+
+        public String getDirection() {
+            return direction;
+        }
+
+        public void setDirection(String direction) {
+            this.direction = direction;
+        }
+
         @Override
         public void run() {
             int ctr = 1;
-            while(isAlive){
+            while(isActive){
                 try {
                     Thread.sleep(500);
                     ctr++;
                     if(ctr == 5){
-                        Bullet bullet = new Bullet("Friend",position, bullet_pos);
+                        Bullet bullet = new Bullet("Friend",position, bullet_pos, enemies);
                         bullets.add(bullet);
                         bullet.start();
                         ctr = 1;
@@ -92,7 +146,9 @@ public class Game extends JPanel {
                 }
                 direction = getRandomDirection();
                 move();
+                repaint();
             }
+            friends.remove(this);
         }
         public void move(){
             int new_x = (int)position.getX();
@@ -120,12 +176,13 @@ public class Game extends JPanel {
 
         private Point position;
         private String direction;
-        private boolean isAlive;
+        private boolean isActive;
 
         public AirCraft(){
+            friends.add(this);
             position = new Point(250,250);
             this.direction = "";
-            isAlive = true;
+            isActive = true;
             addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {}
@@ -165,16 +222,40 @@ public class Game extends JPanel {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     super.mousePressed(e);
-                    Bullet bullet = new Bullet("AirCraft",position, bullet_pos);
+                    Bullet bullet = new Bullet("AirCraft",position, bullet_pos, enemies);
                     bullets.add(bullet);
                     bullet.start();
                 }
             });
         }
 
+        public Point getPosition() {
+            return position;
+        }
+
+        public void setPosition(Point position) {
+            this.position = position;
+        }
+
+        public String getDirection() {
+            return direction;
+        }
+
+        public void setDirection(String direction) {
+            this.direction = direction;
+        }
+
+        public boolean isActive() {
+            return isActive;
+        }
+
+        public void setActive(boolean active) {
+            isActive = active;
+        }
+
         @Override
         public void run() {
-            while(isAlive){
+            while(isActive){
                 my_pos = position;
                 repaint();
             }
@@ -188,6 +269,9 @@ public class Game extends JPanel {
 
     public Point my_pos;
     public ArrayList<Bullet> bullets;
+
+    public ArrayList<Object> enemies;
+    public ArrayList<Object> friends;
 
     public Game(){
         JFrame window = new JFrame();
@@ -208,6 +292,8 @@ public class Game extends JPanel {
         enemy_pos = new ArrayList<>();
         bullet_pos = new ArrayList<>();
         bullets = new ArrayList<>();
+        enemies = new ArrayList<>();
+        friends = new ArrayList<>();
     }
     public Point getNewRectangleStartPosition(){
         Random random = new Random();
@@ -241,16 +327,19 @@ public class Game extends JPanel {
         super.paintComponent(g);
         Graphics g2 = (Graphics2D) g;
         g2.setColor(Color.GREEN);
-        for(int i=0; friend_pos != null && i<friend_pos.size(); i++){
-            Point pos = friend_pos.get(i);
+        for(int i=0; friends != null && i<friends.size(); i++){
+            if(!friends.get(i).getClass().equals(Game.Friend.class))
+                continue;
+            Game.Friend enemy = (Game.Friend)friends.get(i);
+            Point pos = enemy.getPosition();
             g2.fillRect(pos.x, pos.y, 10,10);
         }
         g2.setColor(Color.BLACK);
-        for(int i=0; enemy_pos != null && i<enemy_pos.size(); i++){
-            Point pos = enemy_pos.get(i);
+        for(int i=0; enemies != null && i<enemies.size(); i++){
+            Game.Enemy enemy = (Game.Enemy)enemies.get(i);
+            Point pos = enemy.getPosition();
             g2.fillRect(pos.x, pos.y, 10,10);
         }
-
         for(int i=0; bullets != null && i<bullets.size(); i++){
             Bullet bullet = bullets.get(i);
             if(bullet != null && bullet.isAlive()){

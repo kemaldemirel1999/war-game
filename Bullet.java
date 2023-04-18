@@ -51,23 +51,27 @@ public class Bullet extends Thread{
                     if(square.getClass().equals(Game.Friend.class)){
                         Game.Friend friend = (Game.Friend)square;
                         if(position_left!= null && position_left.distance(friend.getPosition()) <= 5){
-                            System.out.println("kill");
                             kill(friend);
+                            position_left = null;
+                            left_bullet_alive = false;
                         }
                         if(position_right!= null && position_right.distance(friend.getPosition()) <= 5){
-                            System.out.println("kill");
                             kill(friend);
+                            position_right = null;
+                            right_bullet_alive = false;
                         }
                     }
                     else if(square.getClass().equals(Game.AirCraft.class)){
                         Game.AirCraft airCraft = (Game.AirCraft)square;
                         if(position_left!= null && position_left.distance(airCraft.getPosition()) <= 5){
                             kill(airCraft);
-                            System.out.println("kill");
+                            position_left = null;
+                            left_bullet_alive = false;
                         }
                         if(position_right!= null && position_right.distance(airCraft.getPosition()) <= 5){
                             kill(airCraft);
-                            System.out.println("kill");
+                            position_right = null;
+                            right_bullet_alive = false;
                         }
                     }
                 }
@@ -75,11 +79,13 @@ public class Bullet extends Thread{
                     Game.Enemy enemy = (Game.Enemy) square;
                     if(position_left!= null && position_left.distance(enemy.getPosition()) <= 5){
                         kill(enemy);
-                        System.out.println("kill");
+                        position_left = null;
+                        left_bullet_alive = false;
                     }
                     if(position_right!= null && position_right.distance(enemy.getPosition()) <= 5){
                         kill(enemy);
-                        System.out.println("kill");
+                        position_right = null;
+                        right_bullet_alive = false;
                     }
                 }
             }

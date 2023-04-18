@@ -252,10 +252,26 @@ public class Game extends JPanel {
         public void setActive(boolean active) {
             isActive = active;
         }
-
+        public void killAllSquares(){
+            for(int i=0; enemies != null && i<enemies.size(); i++){
+                Game.Enemy enemy = (Game.Enemy)enemies.get(i);
+                enemy.setActive(false);
+            }
+            for(int i=0; friends != null && i<friends.size(); i++){
+                if(!friends.get(i).getClass().equals(Game.Friend.class))
+                    continue;
+                Game.Friend enemy = (Game.Friend)friends.get(i);
+                enemy.setActive(false);
+            }
+        }
         @Override
         public void run() {
             while(isActive){
+                if(enemies.isEmpty()){
+                    killAllSquares();
+                    System.out.println("Oyunu kazandiniz.");
+                    break;
+                }
                 my_pos = position;
                 repaint();
             }

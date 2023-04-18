@@ -269,12 +269,14 @@ public class Game extends JPanel {
             while(isActive){
                 if(enemies.isEmpty()){
                     killAllSquares();
-                    System.out.println("Oyunu kazandiniz.");
+                    JOptionPane.showMessageDialog(null, "Oyunu Kazandiniz.");
                     break;
                 }
                 my_pos = position;
                 repaint();
             }
+            killAllSquares();
+            window.dispose();
         }
     }
 
@@ -288,9 +290,10 @@ public class Game extends JPanel {
 
     public ArrayList<Object> enemies;
     public ArrayList<Object> friends;
+    public JFrame window;
 
     public Game(){
-        JFrame window = new JFrame();
+        window = new JFrame();
         window.setSize(500,500);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(500,500));

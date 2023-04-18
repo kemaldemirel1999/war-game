@@ -9,23 +9,17 @@ import java.util.Random;
 
 public class Game extends JPanel {
 
-    private int ctr = 0;
 
     public class Enemy extends Thread{
         private Point position;
         private boolean isAlive;
-        private Color color;
         private String direction;
-        private int id;
 
         public Enemy(){
             position = getNewRectangleStartPosition();
             square_positions.add(position);
             enemy_pos.add(position);
             isAlive = true;
-            color = new Color(Color.BLACK.getRGB());
-            this.id = ctr+1;
-            ctr++;
         }
         @Override
         public void run() {
@@ -72,18 +66,13 @@ public class Game extends JPanel {
     public class Friend extends Thread{
         private Point position;
         private boolean isAlive;
-        private Color color;
         private String direction;
-        private int id;
 
         public Friend(){
             position = getNewRectangleStartPosition();
             square_positions.add(position);
             friend_pos.add(position);
             isAlive = true;
-            color = new Color(Color.GREEN.getRGB());
-            this.id = ctr+1;
-            ctr++;
         }
         @Override
         public void run() {
@@ -132,13 +121,11 @@ public class Game extends JPanel {
         private Point position;
         private String direction;
         private boolean isAlive;
-        private Color color;
 
         public AirCraft(){
             position = new Point(250,250);
-            direction = "";
+            this.direction = "";
             isAlive = true;
-            color = new Color(Color.RED.getRGB());
             addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {}
@@ -276,7 +263,7 @@ public class Game extends JPanel {
                         g2.setColor(Color.BLUE);
                         break;
                     case "Friend":
-                        g2.setColor(new Color(128,0,128));
+                        g2.setColor(Color.MAGENTA);
                         break;
                 }
                 Point left = bullet.getPositionLeft();

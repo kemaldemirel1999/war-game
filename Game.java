@@ -87,7 +87,7 @@ public class Game extends JPanel {
                     new_x = position.x + 10;
                     break;
             }
-            if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y <= 500){
+            if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y < 500){
                 position.setLocation(new_x, new_y);
             }
         }
@@ -168,7 +168,7 @@ public class Game extends JPanel {
                     new_x = position.x + 10;
                     break;
             }
-            if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y <= 500){
+            if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y < 500){
                 position.setLocation(new_x, new_y);
             }
         }
@@ -209,7 +209,7 @@ public class Game extends JPanel {
                         direction = "DOWN";
                         new_y = position.y + 10;
                     }
-                    if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y <= 500){
+                    if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y < 500){
                         position.setLocation(new_x, new_y);
                     }
                 }

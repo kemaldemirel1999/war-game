@@ -47,30 +47,6 @@ public class Game extends JPanel {
         public void setDirection(String direction) {
             this.direction = direction;
         }
-        private void checkCrossWithEnemy(){
-            Iterator<Object> iterator = friends.iterator();
-
-            while(iterator.hasNext()){
-                Object object = iterator.next();
-                if(object!=null){
-                    if(object.getClass().equals(Game.Friend.class)){
-                        Game.Friend friend = (Game.Friend)object;
-                        if(friend.isActive && position.distance(friend.getPosition()) <10){
-                            friend.setActive(false);
-                            setActive(false);
-                        }
-                    }
-                    else if(object.getClass().equals(Game.AirCraft.class)){
-                        Game.AirCraft airCraft = (Game.AirCraft)object;
-                        if(airCraft.isActive && position.distance(airCraft.getPosition()) <10){
-                            airCraft.setActive(false);
-                            setActive(false);
-                        }
-                    }
-
-                }
-            }
-        }
 
         @Override
         public void run() {
@@ -152,25 +128,11 @@ public class Game extends JPanel {
         public void setDirection(String direction) {
             this.direction = direction;
         }
-        private void checkCrossWithEnemy(){
-            Iterator<Object> iterator = enemies.iterator();
 
-            while(iterator.hasNext()){
-                Object object = iterator.next();
-                if(object!=null){
-                    Game.Enemy enemy = (Game.Enemy)object;
-                    if(enemy.isActive && position.distance(enemy.getPosition()) <10){
-                        enemy.setActive(false);
-                        setActive(false);
-                    }
-                }
-            }
-        }
         @Override
         public void run() {
             int ctr = 1;
             while(isActive){
-                checkCrossWithEnemy();
                 try {
                     Thread.sleep(500);
                     ctr++;
@@ -247,7 +209,7 @@ public class Game extends JPanel {
                         direction = "DOWN";
                         new_y = position.y + 10;
                     }
-                    if(new_x > 0 && new_x < 500 && new_y > 0 && new_y < 500){
+                    if(new_x >= 0 && new_x < 500 && new_y >= 0 && new_y <= 500){
                         position.setLocation(new_x, new_y);
                     }
                 }
@@ -303,19 +265,35 @@ public class Game extends JPanel {
             }
         }
         private void checkCrossWithEnemy(){
-            Iterator<Object> iterator = enemies.iterator();
-
-            while(iterator.hasNext()){
-                Object object = iterator.next();
-                if(object!=null){
-                    Game.Enemy enemy = (Game.Enemy)object;
-                    if(enemy.isActive && position.distance(enemy.getPosition()) <10){
-                        enemy.setActive(false);
-                        setActive(false);
+            for(int i=0; i<enemies.size(); i++){
+                Game.Enemy enemy = (Enemy) enemies.get(i);
+                if(!enemy.isAlive())
+                    continue;
+                for(int j=0; j<friends.size(); j++){
+                    if(friends.get(j).getClass().equals(Game.Friend.class)){
+                        Game.Friend friend = (Game.Friend)friends.get(j);
+                        if(friend.isAlive()){
+                            if(enemy.getPosition().distance(friend.getPosition()) <10){
+                                enemy.setActive(false);
+                                friend.setActive(false);
+                            }
+                        }
+                    }
+                    else if(friends.get(j).getClass().equals(Game.AirCraft.class)){
+                        Game.AirCraft airCraft = (Game.AirCraft)friends.get(j);
+                        if(airCraft.isAlive()){
+                            if(enemy.getPosition().distance(airCraft.getPosition()) <10){
+                                enemy.setActive(false);
+                                airCraft.setActive(false);
+                                return;
+                            }
+                        }
                     }
                 }
             }
+
         }
+
         @Override
         public void run() {
             boolean winned = false;
@@ -326,7 +304,7 @@ public class Game extends JPanel {
                     JOptionPane.showMessageDialog(null, "Oyunu kazandiniz.");
                     break;
                 }
-                checkCrossWithEnemy();
+                this.checkCrossWithEnemy();
                 my_pos = position;
                 repaint();
             }

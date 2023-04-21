@@ -3,7 +3,8 @@ public class Main{
 	
 	
 public static void main(String[] args) {
-
+		
+		
 		int num_enemies = 10;
 		int num_friends = 10;
 		
@@ -39,6 +40,5 @@ public static void main(String[] args) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 }
